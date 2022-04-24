@@ -16,12 +16,20 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-client.connect((err) => {
-  const collection = client.db('test').collection('devices');
-  console.log('DB Collected');
-  // perform actions on the collection object
-  client.close();
-});
+async function run() {
+  try {
+    await client.connect();
+    const serviceCollection = client.db('geniusCar').collection('service');
+    app.get('/service', async (req, res) => {
+      const query = {};
+      const cursor = serviceCollection.find(query);
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+  } finally {
+  }
+}
+run().catch(console.dir);
 
 app.get('/', (req, res) => {
   res.send('Running Genius Server');
